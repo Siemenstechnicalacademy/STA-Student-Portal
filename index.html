@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siemens Technical Academy | Student Exam Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-container">
+        <div class="logo-header">
+            <span class="siemens-text">SIEMENS</span>
+        </div>
+
+        <div id="login-section" class="login-card">
+            <h2 style="text-align: left; margin-bottom: 20px;">STA Student Login</h2>
+            
+            <div class="input-group">
+                <label>Student Name</label>
+                <input type="text" id="studentName" placeholder="Enter Name">
+            </div>
+
+            <div class="input-group">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 14px;">TC Number</label>
+                <input type="text" id="tcNumber" placeholder="Enter TC Number" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="studentPass" placeholder="Enter Password">
+                <p id="login-error" style="color: #d9534f; font-size: 13px; margin-top: 5px; display: none; font-weight: 600;">❌ Name or Password is not correct.</p>
+            </div>
+            
+            <button class="login-btn" style="width: 100%;" onclick="showInstructions()">LOG IN</button>
+        </div>
+
+        <div id="instruction-section" class="login-card" style="display: none; text-align: left;">
+            <h2 style="text-align: center;">Exam Instructions</h2>
+            <hr style="margin: 15px 0; border: 0.5px solid #eee;">
+            <ul style="list-style: none; line-height: 2; color: #444;">
+                <li>✅ <b>Duration:</b> 90 Minutes</li>
+                <li>✅ <b>Security:</b> Fullscreen mode is mandatory.</li>
+                <li>⚠️ <b>Warning:</b> Leaving the tab twice will auto-submit.</li>
+            </ul>
+            <br>
+            <button class="login-btn" style="width: 100%;" onclick="startExam()">START EXAM</button>
+            <div id="homework-btn-container" style="display:none; margin-top:12px;">
+                <button class="login-btn" id="homework-portal-btn" style="width:100%; background:#6366f1;" onclick="openHomework()">📚 VIEW HOMEWORK</button>
+            </div>
+        </div>
+
+        <!-- HOMEWORK ATTEMPT SECTION -->
+        <div id="homework-section" style="display:none; width:100%; max-width:700px; background:white; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.5); animation:fadeIn 0.4s ease;">
+            <div style="background:linear-gradient(135deg,#6366f1,#818cf8); padding:20px 24px; border-radius:10px 10px 0 0; color:white;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:12px; font-weight:700; opacity:0.8; text-transform:uppercase; letter-spacing:1px;">Homework Assignment</div>
+                        <div id="hw-title" style="font-size:18px; font-weight:700; margin-top:4px;">Loading...</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:24px; font-weight:900;" id="hw-question-counter">Q1</div>
+                        <div style="font-size:12px; opacity:0.8;" id="hw-total-label">of ? questions</div>
+                    </div>
+                </div>
+                <div style="margin-top:12px; background:rgba(255,255,255,0.2); border-radius:10px; height:6px; overflow:hidden;">
+                    <div id="hw-progress" style="height:100%; background:white; border-radius:10px; transition:width 0.4s ease; width:0%;"></div>
+                </div>
+            </div>
+            <div style="padding:24px 20px;">
+                <p id="hw-question-text" style="font-size:16px; font-weight:600; color:#222; line-height:1.6; margin-bottom:18px;"></p>
+                <div id="hw-options-container" style="display:flex; flex-direction:column; gap:10px;"></div>
+                <div style="display:flex; justify-content:space-between; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid #eee;">
+                    <button id="hw-prev-btn" class="login-btn" style="flex:1; max-width:150px; background:#6c757d;" onclick="hwPrev()">PREVIOUS</button>
+                    <button id="hw-next-btn" class="login-btn" style="flex:1; max-width:150px; background:#6366f1;" onclick="hwNext()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOMEWORK RESULT SECTION -->
+        <div id="homework-result-section" class="login-card" style="display:none; text-align:center;">
+            <div style="font-size:40px; margin-bottom:8px;">📚</div>
+            <h2 id="hw-status" style="font-size:28px; margin-bottom:8px;">STATUS</h2>
+            <h3 style="color:#6366f1; font-size:18px; margin-bottom:8px; font-weight:600;">Homework Submitted!</h3>
+            <div style="font-size:48px; font-weight:900; color:#6366f1; margin:16px 0;" id="hw-final-score">0/0</div>
+            <p id="hw-percent" style="font-size:18px; color:#555; margin-bottom:16px;">Score: 0%</p>
+            <div id="hw-result-detail"></div>
+            <p style="color:#888; font-style:italic; font-size:13px; margin-top:16px;">Great work! Your homework has been recorded.</p>
+        </div>
+
+        <div id="question-section" style="display: none;">
+            <div class="question-header">
+                <span>Question <span id="question-number">1</span> / <span id="total-questions">25</span></span>
+                <span id="timer-display" style="color: #d9534f;">Time: 90:00</span>
+            </div>
+            <div class="progress-container"><div id="progress-bar"></div></div>
+            <h3 id="question-text"></h3>
+            <div id="options-container"></div>
+            <div class="nav-buttons">
+                <button id="prev-btn" class="login-btn" onclick="prevQuestion()">PREVIOUS</button>
+                <button id="next-btn" class="login-btn" onclick="nextQuestion()">NEXT</button>
+            </div>
+        </div>
+
+        <div id="result-section" class="login-card" style="display: none; text-align: center;">
+            <h2 id="result-status" style="font-size: 28px;">STATUS</h2>
+            <div style="font-size: 50px; font-weight: bold; margin: 20px 0;"><span id="final-score">0</span>/<span id="final-total">25</span></div>
+            <p id="result-percent" style="margin-bottom: 20px; font-size: 18px;">Percentage: 0%</p>
+            <p style="color: #888; font-style: italic; border-top: 1px solid #eee; padding-top: 15px;">Exam ended. Please contact your supervisor.</p>
+            <div id="result-detail"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyApnWnlnrTFQw5hsHVvjnK0kvwqIh3Nh5E",
+            authDomain: "sta-question-bank.firebaseapp.com",
+            databaseURL: "https://sta-question-bank-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sta-question-bank",
+            storageBucket: "sta-question-bank.firebasestorage.app",
+            messagingSenderId: "632844417227",
+            appId: "1:632844417227:web:6b60831113d49c18fd834e",
+            measurementId: "G-QPWV3ZFS14"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const firestoreDb = firebase.firestore();
+    </script>
+
+    <script src="students_db.js"></script>
+    <script src="question_bank.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
